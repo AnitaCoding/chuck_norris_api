@@ -1,4 +1,16 @@
+body{
+    background-color: #fdfbd4;
+}
 
+header{
+    font-family: "Bowlby One SC", sans-serif;
+    
+    padding: 2rem 1rem;
+}
+
+h1{
+    font-size: 4rem;
+}
 #choose-category{
     text-align: center;
 }

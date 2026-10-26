@@ -13,9 +13,9 @@ class Model_Api:
 
     def get_jokes(self, selected_category):
         self.jokes = consult.get(f'https://api.chucknorris.io/jokes/random?category={selected_category}')
-        return self.jokes.json()
+        return self.jokes.json()['value']
     
     def get_random_joke(self):
         self.jokes = consult.get('https://api.chucknorris.io/jokes/random')
-        return self.jokes.json()
+        return self.jokes.json()['value']
 

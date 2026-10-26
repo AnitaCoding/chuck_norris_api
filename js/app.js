@@ -3,7 +3,6 @@ const CHOSEN_CATEGORY_URL = 'https://api.chucknorris.io/jokes/random?category='
 const RANDOM_JOKE = 'https://api.chucknorris.io/jokes/random'
 const SELECTION = document.getElementById('choose-category')
 
-
 function getCategories(){
     //Petición http GET usando FetchAPI
     fetch(CATEGORIES_URL)
