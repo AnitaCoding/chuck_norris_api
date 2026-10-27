@@ -24,19 +24,18 @@ function getChosenCategory(){
     fetch(`${CHOSEN_CATEGORY_URL}${SELECTION.value}`)
     .then(response => response.json())
     .then(data =>{
-        let categoryJoke = document.getElementById('category-joke')
+        let categoryJoke = document.getElementById('joke')
         categoryJoke.innerHTML = data.value 
         console.log(data.value)
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
 }
 
-
 function getRandomJoke(){
     fetch(RANDOM_JOKE)
     .then(response => response.json())
     .then(data =>{
-        let randomJoke = document.getElementById('random-joke')
+        let randomJoke = document.getElementById('joke')
         randomJoke.innerHTML = data.value 
         console.log(data.value)
     })
