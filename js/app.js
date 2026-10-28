@@ -36,6 +36,7 @@ function getRandomJoke(){
     .then(response => response.json())
     .then(data =>{
         let randomJoke = document.getElementById('joke')
+        randomJoke.parentNode.style.display = 'block'
         randomJoke.innerHTML = data.value 
         console.log(data.value)
     })

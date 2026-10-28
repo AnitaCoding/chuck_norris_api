@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,34 +28,34 @@
                     <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-pane" type="button" role="tab" aria-controls="history-pane" aria-selected="false">Historial</button>
                 </li>
             </ul>
+            
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="random-pane" role="tabpanel" aria-labelledby="random-tab">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Prueba suerte</h5>
-                            <p class="card-text">Toca el botón para un chiste aleatorio</p>
-                            <button id="button-random" class="btn btn-primary">Deja que Chuck te sorprenda</button>
-                        </div>
+                    <div class="text-center div-get-joke">
+                        <h2>Prueba suerte</h2>
+                        <p>Toca el botón para un chiste aleatorio</p>
+                        <button id="button-random" class="btn btn-primary">Deja que Chuck te sorprenda</button>
                     </div>                
                 </div>
 
                 <div class="tab-pane fade" id="category-pane" role="tabpanel" aria-labelledby="category-tab">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Por categoría</h5>
-                            <p class="card-text">Elige una categoría</p>
-                            <select name="choose-category" id="choose-category" class="form-select form-select-sm" aria-label="Elige una categoría"></select>                
-                        </div>
+                    <div class="text-center div-get-joke">
+                        <h2>Por categoría</h2>
+                        <p>Elige una categoría</p>
+                        <select name="choose-category" id="choose-category" class="form-select form-select-sm" aria-label="Elige una categoría"></select>                
+
                     </div>
                 </div>
             </div>
 
-            <div>
+            <div class="div-joke" style="display: none;">
                 <p id="joke"></p>
-                <button type="button" class="btn">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
-                <button type="button" class="btn">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
-                <button type="button" class="btn">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
-            </div>
+                <div class="joke-buttons">
+                    <button type="button" class="btn">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
+                    <button type="button" class="btn">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
+                    <button type="button" class="btn">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                </div>
+                </div>
         </section>
         <footer>
             <small>Chuck Norris approves this</small>

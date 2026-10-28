@@ -1,20 +1,61 @@
-body{
+/*body{
     background-color: #fdfbd4;
+}*/
+
+body{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header{
-    font-family: "Bowlby One SC", sans-serif;   
     padding: 2rem 1rem;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-family: "Bowlby One SC", sans-serif;
 }
 
 h1{
     font-size: 4rem;
 }
 
+h2{
+    font-size: 2rem;
+}
+
+.container-fluid{
+    display: flex;
+    flex-direction: column;
+}
+
+section{
+    flex: 1;
+}
+
+.div-get-joke{
+    padding-top: 3rem;
+}
+
 #choose-category{
     text-align: center;
 }
 
+.div-joke{
+    padding: 2rem;
+}
+
+#joke{
+    color: #eed202;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.joke-buttons{
+    display: flex;
+    justify-content: center;
+}
 footer{
     text-align: center;
+    height: 4rem;
 }
