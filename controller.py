@@ -21,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],      # Permite todas las cabeceras HTTP
 )
 
-class ModelDB(BaseModel):
+class JokeModel(BaseModel):
     id_joke: str
     joke: str
     table_name: str
@@ -34,8 +34,12 @@ TABLE_NAMES = {
 #Controles API
 @app.get("/jokes/random", tags=['Jokes'])
 def index():
-    res = lara.translate(m.get_random_joke(), source="en-US", target="es-ES")
-    return res.translation
+    joke_data = m.get_random_joke()
+    joke_translated = lara.translate(joke_data['value'], source="en-US", target="es-ES").translation
+    return {
+        "id_joke": joke_data["id"],
+        "joke": joke_translated
+    }
     
 @app.get("/jokes_categories/", tags=["Categories"])
 def get_categories():
@@ -47,13 +51,32 @@ def get_categories():
 
 @app.get("/jokes/by_category/{category}", tags=['Jokes'])
 def get_joke_by_category(category: str):
-    res = lara.translate(m.get_jokes(category), source="en-US", target="es-ES")
-    return res.translation
+    joke_data = m.get_jokes(category)
+    joke_translated = lara.translate(joke_data['value'], source="en-US", target="es-ES").translation
+    return {
+        "id_joke": joke_data["id"],
+        "joke": joke_translated
+    }
 
 #Controles BD
 
+#Gets de favourites
+@app.get("/jokes/favourites", tags=['Jokes'])
+def get_favourites():
+    return select_all('fav_facts')
+
+@app.get("/jokes/favourites/{id}", tags=['Jokes'])
+def is_favourite(id:str):
+    return select_by_id(id)
+
+#Gets de history
+@app.get("/jokes/history", tags=['Jokes'])
+def get_favourites():
+    return select_all('history_facts')
+
+#Post
 @app.post("/jokes", tags=["Jokes"])
-def post_joke(body: ModelDB):
+def post_joke(body: JokeModel):
     #Se comprueba que el nombre de tabla que llega de js es correcto (viene en el json)
     #Si no, se lanza una excepción
     #No se trae el nombre exacto de la tabla desde js para evitar que un cliente envíe un valor inesperado.

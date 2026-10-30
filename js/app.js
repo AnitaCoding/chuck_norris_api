@@ -6,6 +6,8 @@ const POST_URL = 'https://localhost:8000/jokes'
 const SELECTION = document.getElementById('choose-category')
 const JOKE = document.getElementById('joke')
 const SAVE_BUTTON = document.getElementById('save_button')
+const FAVOURITE_TAB = document.getElementById('favourite-tab')
+const FAVOURITE_CONTAINER = document.getElementById('fav-container')
 
 function getCategories(){
     //Petición http GET usando FetchAPI
@@ -41,7 +43,7 @@ function getRandomJoke(){
     .then(data =>{
         let randomJoke = document.getElementById('joke')
         randomJoke.parentNode.style.display = 'block'
-        randomJoke.innerHTML = data.value 
+        randomJoke.textContent = data.value 
         console.log(data.value)
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
@@ -54,9 +56,8 @@ SELECTION.addEventListener('change', getChosenCategory)
 
 function saveJoke(tableName){
     //Capturar datos
-    const joke_id = SELECTED_MOVIE_ID
+    //const joke_id = SELECTED_MOVIE_ID hay que pensar en cómo guardar el id
     const JOKE = document.getElementById('nombre').value
-
     fetch(`${POST_URL}`,
     {
         method: 'POST',
@@ -88,3 +89,32 @@ function saveJoke(tableName){
 }
 
 SAVE_BUTTON.addEventListener('click', () => saveJoke('favourites'))
+
+function getFactsFromDB(tableName){
+    //const URL = setUrl(tableName)
+    fetch('http://localhost:8000/jokes/favourites')
+    .then(response => response.json())
+    .then(data => {
+        if(data.length == 0){
+            console.log('nada guardado')
+            //Aquí hay que poner un alert o una notificación
+        }else{
+            showFactsFromDB(data)
+            console.log(data)
+        }
+        
+    }).catch(error=> {
+        console.log("Error al cargar los datos: ", error)
+    })
+}
+
+function showFactsFromDB(data){
+    let facts_list = ''
+    data.forEach(element => {            
+            facts_list += `<p>${element.joke}</p>`
+        });
+
+    //aquí habrá que manejar qué contenedor se elige en función de si es favoritos o histórico
+    FAVOURITE_CONTAINER.innerHTML = facts_list
+}
+FAVOURITE_TAB.addEventListener('click', getFactsFromDB)

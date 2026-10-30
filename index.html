@@ -46,14 +46,21 @@
 
                     </div>
                 </div>
+                
+                <div class="tab-pane fade" id="favourite-pane" role="tabpanel" aria-labelledby="favourite-tab">
+                    <div class="text-center div-get-joke">
+                        <h2>Favoritos</h2>
+                        <div id="fav-container"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="div-joke" style="display: none;">
+            <div id="joke-container" class="div-joke" style="display: none;">
                 <p id="joke"></p>
                 <div class="joke-buttons">
                     <button type="button" id="save_button"class="btn">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
-                    <button type="button" class="btn">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
-                    <button type="button" class="btn">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                    <button type="button" id="copy-button" class="btn">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
+                    <button type="button" id="share-button" class="btn">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
                 </div>
                 </div>
         </section>

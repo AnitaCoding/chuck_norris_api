@@ -17,5 +17,5 @@ class Model_Api:
     
     def get_random_joke(self):
         self.jokes = consult.get('https://api.chucknorris.io/jokes/random')
-        return self.jokes.json()['value']
+        return self.jokes.json()
 
