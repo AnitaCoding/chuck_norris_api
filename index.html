@@ -28,7 +28,6 @@
                     <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-pane" type="button" role="tab" aria-controls="history-pane" aria-selected="false">Historial</button>
                 </li>
             </ul>
-            
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="random-pane" role="tabpanel" aria-labelledby="random-tab">
                     <div class="text-center div-get-joke">
@@ -53,14 +52,20 @@
                         <div id="fav-container"></div>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="history-pane" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="text-center div-get-joke">
+                        <h2>Vistos recientemente</h2>
+                        <div id="history-container"></div>
+                    </div>
+                </div>
             </div>
 
             <div id="joke-container" class="div-joke" style="display: none;">
                 <p id="joke"></p>
                 <div class="joke-buttons">
-                    <button type="button" id="save_button"class="btn">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
+                    <button type="button" id="save_button"class="btn" disabled>Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
                     <button type="button" id="copy-button" class="btn">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
-                    <button type="button" id="share-button" class="btn">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                    <button type="button" id="share-button" class="btn btn-accent">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
                 </div>
                 </div>
         </section>

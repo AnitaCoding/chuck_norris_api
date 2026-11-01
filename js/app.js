@@ -8,6 +8,10 @@ const JOKE = document.getElementById('joke')
 const SAVE_BUTTON = document.getElementById('save_button')
 const FAVOURITE_TAB = document.getElementById('favourite-tab')
 const FAVOURITE_CONTAINER = document.getElementById('fav-container')
+const HISTORY_TAB = document.getElementById('history-tab')
+const HISTORY_CONTAINER = document.getElementById('history-container')
+const COPY_BUTTON = document.getElementById('copy-button')
+const SHARE_BUTTON = document.getElementById('share-button');
 
 function getCategories(){
     //Petición http GET usando FetchAPI
@@ -44,7 +48,6 @@ function getRandomJoke(){
         let randomJoke = document.getElementById('joke')
         randomJoke.parentNode.style.display = 'block'
         randomJoke.textContent = data.value 
-        console.log(data.value)
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
 }
@@ -90,17 +93,25 @@ function saveJoke(tableName){
 
 SAVE_BUTTON.addEventListener('click', () => saveJoke('favourites'))
 
+function setUrl(tableName){
+    let currentUrl = ''
+    if (tableName == 'fav'){
+        currentUrl = 'http://localhost:8000/jokes/favourites'
+    }else{
+        currentUrl = 'http://localhost:8000/jokes/history'
+    }
+    return currentUrl
+}
 function getFactsFromDB(tableName){
-    //const URL = setUrl(tableName)
-    fetch('http://localhost:8000/jokes/favourites')
+    const URL = setUrl(tableName)
+    fetch(URL)
     .then(response => response.json())
     .then(data => {
         if(data.length == 0){
             console.log('nada guardado')
             //Aquí hay que poner un alert o una notificación
         }else{
-            showFactsFromDB(data)
-            console.log(data)
+            showFactsFromDB(data, tableName)
         }
         
     }).catch(error=> {
@@ -108,13 +119,51 @@ function getFactsFromDB(tableName){
     })
 }
 
-function showFactsFromDB(data){
+function showFactsFromDB(data, tableName){
     let facts_list = ''
     data.forEach(element => {            
             facts_list += `<p>${element.joke}</p>`
         });
-
-    //aquí habrá que manejar qué contenedor se elige en función de si es favoritos o histórico
-    FAVOURITE_CONTAINER.innerHTML = facts_list
+    
+    if (tableName == 'fav'){
+        FAVOURITE_CONTAINER.innerHTML = facts_list
+    }else{
+        HISTORY_CONTAINER.innerHTML = facts_list
+    }
+    
 }
-FAVOURITE_TAB.addEventListener('click', getFactsFromDB)
+FAVOURITE_TAB.addEventListener('click',() => getFactsFromDB('fav'))
+HISTORY_TAB.addEventListener('click',() => getFactsFromDB('history'))
+
+//Copiar al portapapeles
+async function writeClipboardText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+COPY_BUTTON.addEventListener("click", () => writeClipboardText(JOKE.textContent));
+
+
+//Compartir chiste
+
+async function shareJoke() {
+  const shareData = {
+    text: JOKE.textContent
+  };
+
+  try {
+    await navigator.share(shareData);
+  } catch (err) {
+    console.error("No se pudo compartir el chiste:", err);
+  }
+}
+
+SHARE_BUTTON.addEventListener('click', shareJoke)
+/*function is_favourite(){
+manda consulta a bd
+si es favorito retorna true y pinta el icono de la señal completa y disabled el botón.
+si no es, pinta la señal vacía
+}*/

@@ -28,7 +28,7 @@ class JokeModel(BaseModel):
 
 TABLE_NAMES = {
     "favourites": "fav_facts",
-    "historial": "joke_history"
+    "historial": "history"
 }
 
 #Controles API
@@ -36,6 +36,7 @@ TABLE_NAMES = {
 def index():
     joke_data = m.get_random_joke()
     joke_translated = lara.translate(joke_data['value'], source="en-US", target="es-ES").translation
+    save_history(joke_data['id'], joke_translated)
     return {
         "id_joke": joke_data["id"],
         "joke": joke_translated
@@ -53,10 +54,14 @@ def get_categories():
 def get_joke_by_category(category: str):
     joke_data = m.get_jokes(category)
     joke_translated = lara.translate(joke_data['value'], source="en-US", target="es-ES").translation
+    save_history(joke_data['id'], joke_translated)
     return {
         "id_joke": joke_data["id"],
         "joke": joke_translated
     }
+
+def save_history(id: str, joke: str):
+    add_to_history(id, joke)
 
 #Controles BD
 
@@ -67,12 +72,12 @@ def get_favourites():
 
 @app.get("/jokes/favourites/{id}", tags=['Jokes'])
 def is_favourite(id:str):
-    return select_by_id(id)
+    return select_by_id(id, 'fav_facts')
 
 #Gets de history
 @app.get("/jokes/history", tags=['Jokes'])
-def get_favourites():
-    return select_all('history_facts')
+def get_history():
+    return select_all('history')
 
 #Post
 @app.post("/jokes", tags=["Jokes"])
@@ -86,11 +91,6 @@ def post_joke(body: JokeModel):
             detail = 'Nombre de tabla incorrecto')
     else:
         current_table = TABLE_NAMES[body.table_name]
-        try:
-            insert_data([body.id_joke, body.joke],current_table)
-            return {'registro': 'correcto'}
-    
-        except Exception as ex:
-            print(ex)
-            return {'error': 'ha fallado el registro del comentario'}
+        insert_data([body.id_joke, body.joke], current_table)
+        
     

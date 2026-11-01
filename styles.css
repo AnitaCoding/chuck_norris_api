@@ -1,7 +1,3 @@
-/*body{
-    background-color: #fdfbd4;
-}*/
-
 body{
   min-height: 100vh;
   display: flex;
@@ -17,7 +13,7 @@ h1, h2, h3, h4, h5, h6{
 }
 
 h1{
-    font-size: 4rem;
+    font-size: 3rem;
 }
 
 h2{
@@ -33,12 +29,41 @@ section{
     flex: 1;
 }
 
+.nav-link{
+    padding: .5rem .75rem;
+    color: #dee2e6
+}
+
+.nav-link{
+    --bs-nav-tabs-link-active-color: #FFE600;
+}
+
+.btn-primary{
+  --bs-btn-color: #212529;
+  --bs-btn-bg: #FFE600;
+  --bs-btn-border-color: #FFE600;
+
+  --bs-btn-hover-color: #212529;
+  --bs-btn-hover-bg: #e6cf00;
+  --bs-btn-hover-border-color: #e6cf00;
+
+  --bs-btn-active-color: #212529;
+  --bs-btn-active-bg: #ccb800;
+  --bs-btn-active-border-color: #ccb800;
+}
+
 .div-get-joke{
     padding-top: 3rem;
 }
 
 #choose-category{
     text-align: center;
+    border-color: #ccb800;
+}
+
+#choose-category:focus {
+  border-color: #FFE600;
+  box-shadow: 0 0 0 0.25rem rgba(255, 230, 0, 0.25);
 }
 
 .div-joke{
@@ -46,7 +71,7 @@ section{
 }
 
 #joke{
-    color: #eed202;
+    color: #ccb800;
     font-size: 1.5rem;
     text-align: center;
 }
@@ -58,4 +83,6 @@ section{
 footer{
     text-align: center;
     height: 4rem;
+    border-top: solid 1px #495057;
+    line-height: 4rem;
 }
