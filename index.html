@@ -34,7 +34,10 @@
                         <h2>Prueba suerte</h2>
                         <p>Toca el botón para un chiste aleatorio</p>
                         <button id="button-random" class="btn btn-primary">Deja que Chuck te sorprenda</button>
-                    </div>                
+                    </div>
+                    <div id="random-joke-container" class="div-joke">
+
+                    </div>              
                 </div>
 
                 <div class="tab-pane fade" id="category-pane" role="tabpanel" aria-labelledby="category-tab">
@@ -42,7 +45,9 @@
                         <h2>Por categoría</h2>
                         <p>Elige una categoría</p>
                         <select name="choose-category" id="choose-category" class="form-select form-select-sm" aria-label="Elige una categoría"></select>                
-
+                        <button id="button-category" style="display: none" class="btn btn-primary">Un chiste más</button>
+                    </div>
+                    <div id="category-joke-container" class="div-joke">
                     </div>
                 </div>
                 
@@ -59,15 +64,6 @@
                     </div>
                 </div>
             </div>
-
-            <div id="joke-container" class="div-joke" style="display: none;">
-                <p id="joke"></p>
-                <div class="joke-buttons">
-                    <button type="button" id="save_button"class="btn" disabled>Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
-                    <button type="button" id="copy-button" class="btn">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
-                    <button type="button" id="share-button" class="btn btn-accent">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
-                </div>
-                </div>
         </section>
         <footer>
             <small>Chuck Norris approves this</small>

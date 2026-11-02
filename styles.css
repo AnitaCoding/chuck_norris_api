@@ -29,12 +29,13 @@ section{
     flex: 1;
 }
 
+.nav{
+    display: flex;
+    justify-content: center;
+}
 .nav-link{
     padding: .5rem .75rem;
-    color: #dee2e6
-}
-
-.nav-link{
+    color: #dee2e6;
     --bs-nav-tabs-link-active-color: #FFE600;
 }
 

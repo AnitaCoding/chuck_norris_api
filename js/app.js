@@ -3,15 +3,14 @@ const CHOSEN_CATEGORY_URL = 'https://api.chucknorris.io/jokes/random?category='
 const RANDOM_JOKE = 'https://api.chucknorris.io/jokes/random'
 const POST_URL = 'https://localhost:8000/jokes'
 
+const RANDOM_JOKE_CONTAINER = document.getElementById('random-joke-container')
 const SELECTION = document.getElementById('choose-category')
-const JOKE = document.getElementById('joke')
-const SAVE_BUTTON = document.getElementById('save_button')
+const CATEGORY_JOKE_CONTAINER = document.getElementById('category-joke-container')
+const CATEGORY_BUTTON = document.getElementById('button-category')
 const FAVOURITE_TAB = document.getElementById('favourite-tab')
 const FAVOURITE_CONTAINER = document.getElementById('fav-container')
 const HISTORY_TAB = document.getElementById('history-tab')
 const HISTORY_CONTAINER = document.getElementById('history-container')
-const COPY_BUTTON = document.getElementById('copy-button')
-const SHARE_BUTTON = document.getElementById('share-button');
 
 function getCategories(){
     //Petición http GET usando FetchAPI
@@ -34,9 +33,13 @@ function getChosenCategory(){
     fetch(`${CHOSEN_CATEGORY_URL}${SELECTION.value}`)
     .then(response => response.json())
     .then(data =>{
-        let categoryJoke = document.getElementById('joke')
-        categoryJoke.innerHTML = data.value 
-        console.log(data.value)
+        CATEGORY_JOKE_CONTAINER.innerHTML = `<p class="joke-text" data-joke-id=${data.id}>${data.value}</p>
+                        <div class="joke-buttons">
+                            <button type="button" class="btn save-button">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
+                            <button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
+                            <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                        </div>` 
+        CATEGORY_BUTTON.style.display = 'block'
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
 }
@@ -45,9 +48,13 @@ function getRandomJoke(){
     fetch(RANDOM_JOKE)
     .then(response => response.json())
     .then(data =>{
-        let randomJoke = document.getElementById('joke')
-        randomJoke.parentNode.style.display = 'block'
-        randomJoke.textContent = data.value 
+        RANDOM_JOKE_CONTAINER.innerHTML = `<p class="joke-text" data-joke-id=${data.id}>${data.value}</p>
+                        <div class="joke-buttons">
+                        <button type="button" class="btn save-button">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
+                        <button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
+                        <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                        </div>`
+        connectButtonActions(RANDOM_JOKE_CONTAINER, data)
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
 }
@@ -91,8 +98,6 @@ function saveJoke(tableName){
     );    
 }
 
-SAVE_BUTTON.addEventListener('click', () => saveJoke('favourites'))
-
 function setUrl(tableName){
     let currentUrl = ''
     if (tableName == 'fav'){
@@ -102,6 +107,7 @@ function setUrl(tableName){
     }
     return currentUrl
 }
+
 function getFactsFromDB(tableName){
     const URL = setUrl(tableName)
     fetch(URL)
@@ -122,13 +128,22 @@ function getFactsFromDB(tableName){
 function showFactsFromDB(data, tableName){
     let facts_list = ''
     data.forEach(element => {            
-            facts_list += `<p>${element.joke}</p>`
+            facts_list += `<div class="joke-card">
+                            <p class="joke-text" data-joke-id=${element.joke_id}>${element.joke}</p>
+                            <div class="joke-buttons">
+                                <button type="button" class="btn save-button">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
+                                <button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
+                                <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                            </div>
+                        </div>`
         });
     
     if (tableName == 'fav'){
         FAVOURITE_CONTAINER.innerHTML = facts_list
+        connectAllButtonActions(FAVOURITE_CONTAINER)
     }else{
         HISTORY_CONTAINER.innerHTML = facts_list
+        connectAllButtonActions(HISTORY_CONTAINER)
     }
     
 }
@@ -144,14 +159,11 @@ async function writeClipboardText(text) {
   }
 }
 
-COPY_BUTTON.addEventListener("click", () => writeClipboardText(JOKE.textContent));
-
-
 //Compartir chiste
 
-async function shareJoke() {
+async function shareJoke(text) {
   const shareData = {
-    text: JOKE.textContent
+    text: text
   };
 
   try {
@@ -161,9 +173,43 @@ async function shareJoke() {
   }
 }
 
-SHARE_BUTTON.addEventListener('click', shareJoke)
 /*function is_favourite(){
 manda consulta a bd
 si es favorito retorna true y pinta el icono de la señal completa y disabled el botón.
 si no es, pinta la señal vacía
 }*/
+
+//Asigna acciones a cada botón después del chiste
+function connectButtonActions(container, joke) {
+  const text = container.querySelector(".joke-text");
+  const copy_button = container.querySelector(".copy-button");
+  const share_button = container.querySelector(".share-button");
+  const save_button = container.querySelector(".save-button");
+
+  copy_button.addEventListener("click", async () => {
+    await writeClipboardText(text.textContent);
+  });
+
+  share_button.addEventListener("click", async () => {
+    await shareJoke(text.textContent);
+  });
+
+  save_button.addEventListener("click", () => {
+    saveJoke("favourites", joke.joke_id, text.textContent);
+  });
+}
+
+//Una función que recorre cada card y crea un objeto Joke por cada una de ellas.
+//Llama a connect buttons para crear las acciones de los botones de cada card 
+function connectAllButtonActions(container) {
+  const cards = container.querySelectorAll(".joke-card");
+
+  cards.forEach(card => {
+    const joke = {
+      id_joke: card.dataset.jokeId,
+      joke: card.querySelector(".joke-text").textContent
+    };
+
+    connectButtonActions(card, joke);
+  });
+}
