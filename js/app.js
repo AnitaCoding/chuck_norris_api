@@ -2,6 +2,7 @@ const CATEGORIES_URL = 'https://api.chucknorris.io/jokes/categories'
 const CHOSEN_CATEGORY_URL = 'https://api.chucknorris.io/jokes/random?category='
 const RANDOM_JOKE = 'https://api.chucknorris.io/jokes/random'
 const POST_URL = 'https://localhost:8000/jokes'
+const FAVOURITES_URL = 'http://localhost:8000/jokes/favourites'
 
 const RANDOM_JOKE_CONTAINER = document.getElementById('random-joke-container')
 const SELECTION = document.getElementById('choose-category')
@@ -39,10 +40,13 @@ function getChosenCategory(){
                             <button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
                             <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
                         </div>` 
-        CATEGORY_BUTTON.style.display = 'block'
+        CATEGORY_BUTTON.style.display = 'inline-block'
+        isFavourite(data.id, RANDOM_JOKE_CONTAINER)
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
 }
+
+CATEGORY_BUTTON.addEventListener('click', getChosenCategory)
 
 function getRandomJoke(){
     fetch(RANDOM_JOKE)
@@ -55,6 +59,7 @@ function getRandomJoke(){
                         <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
                         </div>`
         connectButtonActions(RANDOM_JOKE_CONTAINER, data)
+        isFavourite(data.id, RANDOM_JOKE_CONTAINER)
     })
     .catch(error=> console.log("Error al cargar los datos: ", error))
 }
@@ -101,7 +106,7 @@ function saveJoke(tableName){
 function setUrl(tableName){
     let currentUrl = ''
     if (tableName == 'fav'){
-        currentUrl = 'http://localhost:8000/jokes/favourites'
+        currentUrl = FAVOURITES_URL
     }else{
         currentUrl = 'http://localhost:8000/jokes/history'
     }
@@ -129,13 +134,13 @@ function showFactsFromDB(data, tableName){
     let facts_list = ''
     data.forEach(element => {            
             facts_list += `<div class="joke-card">
-                            <p class="joke-text" data-joke-id=${element.joke_id}>${element.joke}</p>
-                            <div class="joke-buttons">
-                                <button type="button" class="btn save-button">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
-                                <button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
-                                <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
-                            </div>
-                        </div>`
+                                <p class="joke-text" data-joke-id=${element.joke_id}>${element.joke}</p>
+                                <div class="joke-buttons">
+                                    <button type="button" class="btn save-button">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>
+                                    <button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
+                                    <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>
+                                </div>
+                            </div>`
         });
     
     if (tableName == 'fav'){
@@ -144,59 +149,74 @@ function showFactsFromDB(data, tableName){
     }else{
         HISTORY_CONTAINER.innerHTML = facts_list
         connectAllButtonActions(HISTORY_CONTAINER)
-    }
-    
+    }   
 }
 FAVOURITE_TAB.addEventListener('click',() => getFactsFromDB('fav'))
 HISTORY_TAB.addEventListener('click',() => getFactsFromDB('history'))
 
 //Copiar al portapapeles
 async function writeClipboardText(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (error) {
-    console.error(error.message);
-  }
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 //Compartir chiste
 
 async function shareJoke(text) {
-  const shareData = {
-    text: text
-  };
+    const shareData = {
+        text: text
+    };
 
-  try {
-    await navigator.share(shareData);
-  } catch (err) {
-    console.error("No se pudo compartir el chiste:", err);
-  }
+    try {
+        await navigator.share(shareData);
+    } catch (err) {
+        console.error("No se pudo compartir el chiste:", err);
+    }
 }
 
-/*function is_favourite(){
-manda consulta a bd
-si es favorito retorna true y pinta el icono de la señal completa y disabled el botón.
-si no es, pinta la señal vacía
-}*/
+function isFavourite(id, container){
+    fetch(`${FAVOURITES_URL}/${id}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(isFavouriteResponse => {
+        const icon = container.querySelector(".save-button i");
+        const saveButton = container.querySelector(".save-button");
+
+        if (isFavouriteResponse) {
+            icon.classList.replace("fa-regular", "fa-solid");
+            saveButton.disabled = true; 
+        }
+    })
+    .catch(error => {
+        console.error("No se pudo comprobar si es favorito:", error);
+    });
+}
 
 //Asigna acciones a cada botón después del chiste
 function connectButtonActions(container, joke) {
-  const text = container.querySelector(".joke-text");
-  const copy_button = container.querySelector(".copy-button");
-  const share_button = container.querySelector(".share-button");
-  const save_button = container.querySelector(".save-button");
+    const text = container.querySelector(".joke-text");
+    const copy_button = container.querySelector(".copy-button");
+    const share_button = container.querySelector(".share-button");
+    const save_button = container.querySelector(".save-button");
 
-  copy_button.addEventListener("click", async () => {
-    await writeClipboardText(text.textContent);
-  });
+    copy_button.addEventListener("click", async () => {
+        await writeClipboardText(text.textContent);
+    });
 
-  share_button.addEventListener("click", async () => {
-    await shareJoke(text.textContent);
-  });
+    share_button.addEventListener("click", async () => {
+        await shareJoke(text.textContent);
+    });
 
-  save_button.addEventListener("click", () => {
-    saveJoke("favourites", joke.joke_id, text.textContent);
-  });
+    save_button.addEventListener("click", () => {
+        saveJoke("favourites", joke.joke_id, text.textContent);
+    });
 }
 
 //Una función que recorre cada card y crea un objeto Joke por cada una de ellas.
@@ -205,11 +225,14 @@ function connectAllButtonActions(container) {
   const cards = container.querySelectorAll(".joke-card");
 
   cards.forEach(card => {
+    const text = card.querySelector(".joke-text")
     const joke = {
-      id_joke: card.dataset.jokeId,
-      joke: card.querySelector(".joke-text").textContent
+        joke_id: text.dataset.jokeId,
+        joke: text.textContent
     };
-
     connectButtonActions(card, joke);
+    if (container === HISTORY_CONTAINER) {
+        isFavourite(joke.joke_id, card);
+    }
   });
 }

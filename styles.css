@@ -18,6 +18,7 @@ h1{
 
 h2{
     font-size: 2rem;
+    padding: 0 1rem;
 }
 
 .container-fluid{
@@ -33,6 +34,7 @@ section{
     display: flex;
     justify-content: center;
 }
+
 .nav-link{
     padding: .5rem .75rem;
     color: #dee2e6;
@@ -53,6 +55,10 @@ section{
   --bs-btn-active-border-color: #ccb800;
 }
 
+select{
+    margin-bottom: 1rem;
+}
+
 .div-get-joke{
     padding-top: 3rem;
 }
@@ -67,13 +73,17 @@ section{
   box-shadow: 0 0 0 0.25rem rgba(255, 230, 0, 0.25);
 }
 
-.div-joke{
-    padding: 2rem;
+.div-joke, .joke-card{
+    padding: 2rem 2rem 1rem;
 }
 
-#joke{
+.joke-card{ 
+    border-bottom: 1px solid #495057;
+}
+
+.joke-text{
     color: #ccb800;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: center;
 }
 
