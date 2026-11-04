@@ -79,18 +79,32 @@ def is_favourite(id:str):
 def get_history():
     return select_all('history')
 
+def check_table_name(table_name):
+    if(table_name not in TABLE_NAMES):
+        raise HTTPException(
+        status_code=422,
+        detail = 'Nombre de tabla incorrecto')
+    else:
+        current_table = TABLE_NAMES[table_name]
+    return current_table
+
 #Post
 @app.post("/jokes", tags=["Jokes"])
 def post_joke(body: JokeModel):
     #Se comprueba que el nombre de tabla que llega de js es correcto (viene en el json)
     #Si no, se lanza una excepción
     #No se trae el nombre exacto de la tabla desde js para evitar que un cliente envíe un valor inesperado.
-    if(body.table_name not in TABLE_NAMES):
-        raise HTTPException(
-            status_code=422,
-            detail = 'Nombre de tabla incorrecto')
-    else:
-        current_table = TABLE_NAMES[body.table_name]
-        insert_data([body.id_joke, body.joke], current_table)
-        
-    
+    current_table = check_table_name(body.table_name)
+    insert_data([body.id_joke, body.joke], current_table)
+
+#Delete
+@app.delete("/jokes/{table}/{id}", tags=["Jokes"])
+def delete_joke_by_id(table:str, id:str):
+    current_table = check_table_name(table)
+    try:
+        delete_by_id(current_table, id)
+        return {'Chiste' : ' eliminado correctamente'}
+
+    except Exception as ex:
+        print(ex)
+        return {'Ha fallado': ' el borrado'}

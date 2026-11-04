@@ -41,9 +41,18 @@ def more_than_10():
     conexion_check_10.con.close()
     return result[0]['total'] >= 10
 
-def delete_data():
+def delete_more_than_10_history():
     try:
         conexion_delete = Conexion(f'DELETE FROM history WHERE id = (SELECT MIN(id) FROM history)')
+        conexion_delete.res
+        conexion_delete.con.commit()
+        conexion_delete.con.close()
+    except sqlite3.Error as error:
+        print('Error delete: ', error)
+
+def delete_by_id(table, id):
+    try:
+        conexion_delete = Conexion(f'DELETE FROM {table} WHERE joke_id = ?', (id,))
         conexion_delete.res
         conexion_delete.con.commit()
         conexion_delete.con.close()
@@ -53,5 +62,5 @@ def delete_data():
 def add_to_history(id: str, joke: str):
     total_jokes = more_than_10()
     if total_jokes and not select_by_id(id, 'history'):
-        delete_data()
+        delete_more_than_10_history()
     insert_data([id, joke], 'history')
