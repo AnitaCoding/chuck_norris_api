@@ -108,3 +108,13 @@ def delete_joke_by_id(table:str, id:str):
     except Exception as ex:
         print(ex)
         return {'Ha fallado': ' el borrado'}
+
+@app.delete("/jokes", tags=["Jokes"])
+def delete_all_history():
+    try:
+        delete_history()
+        return {'Se ha eliminado' : ' el historial correctamente'}
+
+    except Exception as ex:
+        print(ex)
+        return {'Ha fallado': ' el borrado'}

@@ -14,6 +14,8 @@ const FAVOURITE_TAB = document.getElementById('favourite-tab')
 const FAVOURITE_CONTAINER = document.getElementById('fav-container')
 const HISTORY_TAB = document.getElementById('history-tab')
 const HISTORY_CONTAINER = document.getElementById('history-container')
+const DELETE_HISTORY_BUTTON = document.getElementById('delete-history')
+
 
 function getCategories(){
     //Petición http GET usando FetchAPI
@@ -77,7 +79,11 @@ function getFactsFromDB(tableName){
     .then(response => response.json())
     .then(data => {
         if(data.length == 0){
-            console.log('nada guardado')
+            if(tableName == 'fav'){
+                FAVOURITE_CONTAINER.innerHTML = '<p>Todavía no hay ningún favorito.</p>'
+            }else{
+                HISTORY_CONTAINER.innerHTML = '<p>Todavía no hay nada en el historial.</p>'
+            }
             //Aquí hay que poner un alert o una notificación
         }else{
             showFactsFromDB(data, tableName)
@@ -287,3 +293,23 @@ function updateSaveButton(container){
     icon.classList.replace("fa-regular", "fa-solid");
     saveButton.disabled = true;
 }
+
+function deleteHistory(){
+    fetch(`${POST_DELETE_URL}`, {
+        method: 'DELETE'
+    }).then(response=>{
+        if(!response.ok){
+            throw new Error(`Error HTTP: ${response.status}`)
+        }
+        alert('Historial eliminado correctamente')
+        getFactsFromDB('history')
+
+    }).catch(
+        error=>{
+            alert('No se ha podido eliminar el historial')
+            console.log('Detalle error: ', error)
+        }
+    )
+}
+
+DELETE_HISTORY_BUTTON.addEventListener('click', deleteHistory)

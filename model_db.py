@@ -64,3 +64,12 @@ def add_to_history(id: str, joke: str):
     if total_jokes and not select_by_id(id, 'history'):
         delete_more_than_10_history()
     insert_data([id, joke], 'history')
+
+def delete_history():
+    try:
+        conexion_delete = Conexion('DELETE FROM history')
+        conexion_delete.res
+        conexion_delete.con.commit()
+        conexion_delete.con.close()
+    except sqlite3.Error as error:
+        print('Error delete: ', error)
