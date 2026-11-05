@@ -28,7 +28,10 @@ function getCategories(){
         });
         //Insertar la categoría cargada dentro del selection
         SELECTION.innerHTML = options;
-    }).catch(error=> console.log("Error al cargar los datos: ", error))
+    }).catch(error=> {
+        showToast('Error: No se han podido cargar las categorías', 'text-bg-danger')
+        console.log("Error al cargar los datos: ", error)
+    })
 }
 
 getCategories()
@@ -49,7 +52,9 @@ function getChosenCategory(){
         isFavourite(data.id, CATEGORY_JOKE_CONTAINER)
         saveJoke('historial', JOKE, CATEGORY_JOKE_CONTAINER)
     })
-    .catch(error=> console.log("Error al cargar los datos: ", error))
+    .catch(error=> {
+        showToast('Error al cargar los datos', 'text-bg-danger')
+        console.log("Error al cargar los datos: ", error)})
 }
 SELECTION.addEventListener('change', getChosenCategory)
 CATEGORY_BUTTON.addEventListener('click', getChosenCategory)
@@ -68,7 +73,9 @@ function getRandomJoke(){
         isFavourite(data.id, RANDOM_JOKE_CONTAINER)
         saveJoke('historial', JOKE, RANDOM_JOKE_CONTAINER)
     })
-    .catch(error=> console.log("Error al cargar los datos: ", error))
+    .catch(error=> {
+        showToast('Error al cargar los datos', 'text-bg-danger')
+        console.log("Error al cargar los datos: ", error)})
 }
 
 RANDOM_BUTTON.addEventListener('click', getRandomJoke)
@@ -80,16 +87,15 @@ function getFactsFromDB(tableName){
     .then(data => {
         if(data.length == 0){
             if(tableName == 'fav'){
-                FAVOURITE_CONTAINER.innerHTML = '<p>Todavía no hay ningún favorito.</p>'
+                FAVOURITE_CONTAINER.innerHTML = '<p class="empty-tab-p">Todavía no hay ningún favorito.</p>'
             }else{
-                HISTORY_CONTAINER.innerHTML = '<p>Todavía no hay nada en el historial.</p>'
+                HISTORY_CONTAINER.innerHTML = '<p class="empty-tab-p">Todavía no hay nada en el historial.</p>'
             }
-            //Aquí hay que poner un alert o una notificación
         }else{
             showFactsFromDB(data, tableName)
         }
-        
     }).catch(error=> {
+        showToast('Error al cargar los datos', 'text-bg-danger')
         console.log("Error al cargar los datos: ", error)
     })
 }
@@ -129,12 +135,24 @@ function setUrl(tableName){
 function createActionButtons(section){
     let actionButtons = '<div class="joke-buttons">'
     if (section !== 'fav'){
-        actionButtons += '<button type="button" class="btn save-button">Guardar<span><i class="fa-regular fa-bookmark"></i></span></button>'
+        actionButtons += `<button type="button" class="btn save-button" aria-label="Guardar">
+                            <span class="action-label">Guardar</span>
+                            <span><i class="fa-regular fa-bookmark"></i></span>
+                          </button>`
     }
-    actionButtons += `<button type="button" class="btn copy-button">Copiar<span><i class="fa-regular fa-clipboard"></i></span></button>
-                        <button type="button" class="btn share-button">Compartir<span><i class="fa-solid fa-share-nodes"></i></span></button>`
+    actionButtons += `<button type="button" class="btn copy-button" aria-label="Copiar">
+                        <span class="action-label">Copiar</span>
+                        <span><i class="fa-regular fa-clipboard"></i></span>
+                    </button>
+                    <button type="button" class="btn share-button" aria-label="Compartir">
+                        <span class="action-label">Compartir</span>
+                        <span><i class="fa-solid fa-share-nodes"></i></span>
+                    </button>`
     if (section === 'fav' || section === 'history'){
-        actionButtons += '<button type="button" class="btn delete-button">Eliminar<span><i class="fa-solid fa-trash"></i></span></button>'                 
+        actionButtons += `<button type="button" class="btn delete-button" aria-label="Eliminar">
+                            <span class = "action-label">Eliminar</span>
+                            <span><i class="fa-solid fa-trash"></i></span>
+                          </button>`                 
     }
     actionButtons += '</div>'
     return actionButtons
@@ -163,14 +181,17 @@ function saveJoke(tableName, joke, container){
         if(!response.ok){
             throw new Error(`Error HTTP: ${response.status}`)
         }
-        alert('Guardado')
         if (tableName === 'favourites') {
             updateSaveButton(container)
+            showToast('Guardado', 'text-bg-success' )
         }        
     })
     .catch(
-        error=>{           
-            alert('No se ha podido guardar.')
+        error=>{
+            if (tableName === 'favourites') {
+                updateSaveButton(container)
+                showToast('No se ha podido guardar', 'text-bg-danger' )
+            }
             console.log('Detalle error: ', error)
         }
     );    
@@ -180,8 +201,10 @@ function saveJoke(tableName, joke, container){
 async function writeClipboardText(text) {
     try {
         await navigator.clipboard.writeText(text);
+        showToast('!Copiado!', 'text-bg-success')
     } catch (error) {
         console.error(error.message);
+        showToast('Se ha producido un error', 'text-bg-danger')
     }
 }
 
@@ -195,6 +218,7 @@ async function shareJoke(text) {
         await navigator.share(shareData);
     } catch (err) {
         console.error("No se pudo compartir el chiste:", err);
+        showToast('Navegador incompatible con esta función, cambia a otro navegador', 'text-bg-danger')
     }
 }
 
@@ -274,13 +298,13 @@ function deleteJoke(tableName, id){
         if(!response.ok){
             throw new Error(`Error HTTP: ${response.status}`)
         }
-        alert('Chiste eliminado correctamente')
+        showToast('Chiste eliminado correctamente','text-bg-success' )
         const listName = tableName === 'historial' ? 'history' : 'fav';
         getFactsFromDB(listName)
 
     }).catch(
         error=>{
-            alert('No se ha podido eliminar el chiste')
+            showToast('No se ha podido eliminar', 'text-bg-danger')
             console.log('Detalle error: ', error)
         }
     )
@@ -301,15 +325,29 @@ function deleteHistory(){
         if(!response.ok){
             throw new Error(`Error HTTP: ${response.status}`)
         }
-        alert('Historial eliminado correctamente')
+        showToast('Historial eliminado correctamente','text-bg-success')
         getFactsFromDB('history')
 
     }).catch(
         error=>{
-            alert('No se ha podido eliminar el historial')
+            showToast('No se ha podido eliminar el historial', 'text-bg-danger')
             console.log('Detalle error: ', error)
         }
     )
 }
 
 DELETE_HISTORY_BUTTON.addEventListener('click', deleteHistory)
+
+function showToast(message, color){
+    const TOAST_DIV = document.querySelector('#toast-div')
+    const TOAST_BODY = document.querySelector('.toast-body')
+    if (!TOAST_DIV.classList.contains(color)){
+        TOAST_DIV.classList.add(color)
+    }
+    TOAST_BODY.textContent = message
+
+    bootstrap.Toast.getOrCreateInstance(
+        document.getElementById('toast-div')
+    ).show()
+
+}

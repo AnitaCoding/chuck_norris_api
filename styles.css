@@ -13,7 +13,7 @@ h1, h2, h3, h4, h5, h6{
 }
 
 h1{
-    font-size: 3rem;
+    font-size: 4rem;
 }
 
 h2{
@@ -73,6 +73,12 @@ select{
   box-shadow: 0 0 0 0.25rem rgba(255, 230, 0, 0.25);
 }
 
+.empty-tab-p{
+    padding-top: 2rem;
+    font-size: 1.2rem;
+    color: #ccb800;
+}
+
 .div-joke, .joke-card{
     padding: 2rem 2rem 1rem;
 }
@@ -91,9 +97,57 @@ select{
     display: flex;
     justify-content: center;
 }
+
+.btn.save-button:disabled{
+    border: 0;
+}
+
 footer{
     text-align: center;
     height: 4rem;
     border-top: solid 1px #495057;
     line-height: 4rem;
+}
+
+@media (max-width: 414px) {
+    #myTab {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    #myTab .nav-item {
+        flex: 0 0 auto;       
+    }
+
+    #myTab .nav-link {
+        white-space: nowrap;
+    }
+
+    /*Dos reglas para que los navlink no cambien de color al arrastrar en tabs.*/
+    #myTab .nav-link:hover,
+    #myTab .nav-link:focus {
+        color: #dee2e6;
+    }
+
+    #myTab .nav-link.active,
+    #myTab .nav-link.active:hover,
+    #myTab .nav-link.active:focus {
+        color: #FFE600;
+    }
+}
+
+@media (max-width: 767.98px) {
+    h1{
+        font-size: 2rem;
+    }
+   
+    .joke-buttons > button{
+        font-size: 1.2rem;
+    }
+    
+    .joke-buttons .action-label {
+        display: none;
+    }
 }
