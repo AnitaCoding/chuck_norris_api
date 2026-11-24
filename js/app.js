@@ -29,7 +29,7 @@ function getCategories(){
         //Insertar la categoría cargada dentro del selection
         SELECTION.innerHTML = options;
     }).catch(error=> {
-        showToast('Error: No se han podido cargar las categorías', 'text-bg-danger')
+        showToast('Error: No se han podido cargar las categorías', 'danger')
         console.log("Error al cargar los datos: ", error)
     })
 }
@@ -53,7 +53,7 @@ function getChosenCategory(){
         saveJoke('historial', JOKE, CATEGORY_JOKE_CONTAINER)
     })
     .catch(error=> {
-        showToast('Error al cargar los datos', 'text-bg-danger')
+        showToast('Error al cargar los datos', 'danger')
         console.log("Error al cargar los datos: ", error)})
 }
 SELECTION.addEventListener('change', getChosenCategory)
@@ -74,7 +74,7 @@ function getRandomJoke(){
         saveJoke('historial', JOKE, RANDOM_JOKE_CONTAINER)
     })
     .catch(error=> {
-        showToast('Error al cargar los datos', 'text-bg-danger')
+        showToast('Error al cargar los datos', 'danger')
         console.log("Error al cargar los datos: ", error)})
 }
 
@@ -95,7 +95,7 @@ function getFactsFromDB(tableName){
             showFactsFromDB(data, tableName)
         }
     }).catch(error=> {
-        showToast('Error al cargar los datos', 'text-bg-danger')
+        showToast('Error al cargar los datos', 'danger')
         console.log("Error al cargar los datos: ", error)
     })
 }
@@ -183,14 +183,14 @@ function saveJoke(tableName, joke, container){
         }
         if (tableName === 'favourites') {
             updateSaveButton(container)
-            showToast('Guardado', 'text-bg-success' )
+            showToast('Guardado', 'success' )
         }        
     })
     .catch(
         error=>{
             if (tableName === 'favourites') {
                 updateSaveButton(container)
-                showToast('No se ha podido guardar', 'text-bg-danger' )
+                showToast('No se ha podido guardar', 'danger' )
             }
             console.log('Detalle error: ', error)
         }
@@ -201,10 +201,10 @@ function saveJoke(tableName, joke, container){
 async function writeClipboardText(text) {
     try {
         await navigator.clipboard.writeText(text);
-        showToast('!Copiado!', 'text-bg-success')
+        showToast('!Copiado!', 'success')
     } catch (error) {
         console.error(error.message);
-        showToast('Se ha producido un error', 'text-bg-danger')
+        showToast('Se ha producido un error', 'danger')
     }
 }
 
@@ -218,7 +218,7 @@ async function shareJoke(text) {
         await navigator.share(shareData);
     } catch (err) {
         console.error("No se pudo compartir el chiste:", err);
-        showToast('Navegador incompatible con esta función, cambia a otro navegador', 'text-bg-danger')
+        showToast('Navegador incompatible con esta función, cambia a otro navegador', 'danger')
     }
 }
 
@@ -298,13 +298,13 @@ function deleteJoke(tableName, id){
         if(!response.ok){
             throw new Error(`Error HTTP: ${response.status}`)
         }
-        showToast('Chiste eliminado correctamente','text-bg-success' )
+        showToast('Chiste eliminado correctamente','success' )
         const listName = tableName === 'historial' ? 'history' : 'fav';
         getFactsFromDB(listName)
 
     }).catch(
         error=>{
-            showToast('No se ha podido eliminar', 'text-bg-danger')
+            showToast('No se ha podido eliminar', 'danger')
             console.log('Detalle error: ', error)
         }
     )
@@ -325,12 +325,12 @@ function deleteHistory(){
         if(!response.ok){
             throw new Error(`Error HTTP: ${response.status}`)
         }
-        showToast('Historial eliminado correctamente','text-bg-success')
+        showToast('Historial eliminado correctamente','success')
         getFactsFromDB('history')
 
     }).catch(
         error=>{
-            showToast('No se ha podido eliminar el historial', 'text-bg-danger')
+            showToast('No se ha podido eliminar el historial', 'danger')
             console.log('Detalle error: ', error)
         }
     )
@@ -338,12 +338,13 @@ function deleteHistory(){
 
 DELETE_HISTORY_BUTTON.addEventListener('click', deleteHistory)
 
-function showToast(message, color){
+function showToast(message, tipo){
     const TOAST_DIV = document.querySelector('#toast-div')
     const TOAST_BODY = document.querySelector('.toast-body')
-    if (!TOAST_DIV.classList.contains(color)){
-        TOAST_DIV.classList.add(color)
-    }
+    
+    TOAST_DIV.classList.remove('text-bg-success', 'text-bg-danger');
+    TOAST_DIV.classList.add(tipo === 'success' ? 'text-bg-success' : 'text-bg-danger');
+    
     TOAST_BODY.textContent = message
 
     bootstrap.Toast.getOrCreateInstance(
